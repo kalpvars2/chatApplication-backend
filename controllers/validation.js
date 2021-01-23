@@ -12,4 +12,15 @@ const Validation = (data) => {
 	return schema.validate(data);
 };
 
+const messageValidation = (message) => {
+	const schema = Joi.object({
+		message: Joi.string()
+			.required(),
+		email: Joi.string()
+			.required()
+			.email()
+	});
+	return schema.validate(message);
+};
+
 module.exports = Validation;

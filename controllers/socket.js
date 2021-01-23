@@ -9,19 +9,24 @@ const buildDocKey = (messageObject) => {
 
 module.exports = function (io) {
 	io.on('connection', socket => {
-		console.log(socket.id);
 		socket.on('join', async ({email}) => {
 			const user = await User.findOneAndUpdate({email: email}, {socketId: socket.id}, {new: true});
 		});
 
-		socket.on('submitMessage', async ({messageObject}) => {
-			const docKey = buildDocKey(messageObject);
-			const chat = await Chat.findOneAndUpdate({docKey: docKey}, {$push: {messages: messageObject}, receiverHasRead: false});
-			const senderChats = await Chat.find({docKey: {"$regex" : '.*' + messageObject.sender + '.*'}});
+		socket.on('submitMessage', async ({chatObject}) => {
+			const chat = await Chat.findOne({docKey: chatObject.docKey});
+			if(chat === null){
+				const newChatObject = new Chat(chatObject);
+				await newChatObject.save();
+			} else {
+				await Chat.updateOne({docKey: chatObject.docKey}, {$push: {messages: chatObject.messages[0]}, receiverHasRead: false}, {new: true});
+			}
+			const lastMessage = chatObject.messages[0];
+			const senderChats = await Chat.find({docKey: {"$regex" : '.*' + lastMessage.sender + '.*'}});
 			io.to(socket.id).emit('receiveUpdatedChats', {updatedChats : senderChats});
-			const receiver = await User.findOne({email: messageObject.receiver});
+			const receiver = await User.findOne({email: lastMessage.receiver});
 			if(receiver.socketId !== ''){
-				const receiverChats = await Chat.find({docKey: {"$regex" : '.*' + messageObject.receiver + '.*'}});
+				const receiverChats = await Chat.find({docKey: {"$regex" : '.*' + lastMessage.receiver + '.*'}});
 				io.to(receiver.socketId).emit('receiveUpdatedChats', {updatedChats : receiverChats});
 			}
 		});
@@ -31,11 +36,6 @@ module.exports = function (io) {
 			const sender = await User.findOne({socketId: socket.id});
 			const senderChats = await Chat.find({docKey: {'$regex': '.*' + sender.email + '.*'}});
 			io.to(socket.id).emit('receiveUpdatedChats', {updatedChats: senderChats});
-		});
-
-		socket.on('newChat', async ({chatObject}) => {
-			const newChatObject = chatObject;
-			console.log(newChatObject);
 		});
 
 		socket.on('checkUserExists', async ({email}, callback) => {
