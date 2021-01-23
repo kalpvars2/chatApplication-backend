@@ -27,4 +27,4 @@ app.use('/login', require('./routes/api/login'));
 app.use('/dashboard', require('./routes/api/dashboard'));
 
 app.get('/', (req, res) => {res.json("Server up and running.")});
-server.listen(process.env.PORT, () => console.log(`Server is up on port ${PORT}.`));
+server.listen(process.env.PORT, () => console.log(`Server is up on port ${process.env.PORT}.`));
