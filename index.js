@@ -9,7 +9,7 @@ const Chat = require('./models/chatsModel');
 dotenv.config();
 
 const app = express();
-const server = app.listen(process.env.PORT || 8000);
+const server = app.listen(process.env.PORT);
 const io = socketio(server, {
 	cors: {
 		origin: '*'
