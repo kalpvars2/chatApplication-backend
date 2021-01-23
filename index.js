@@ -9,7 +9,7 @@ const Chat = require('./models/chatsModel');
 dotenv.config();
 
 const app = express();
-const server = app.listen(process.env.PORT);
+const server = http.createServer(app);
 const io = socketio(server, {
 	cors: {
 		origin: '*'
@@ -27,3 +27,4 @@ app.use('/login', require('./routes/api/login'));
 app.use('/dashboard', require('./routes/api/dashboard'));
 
 app.get('/', (req, res) => {res.json("Server up and running.")});
+server.listen(process.env.PORT, () => console.log(`Server is up on port ${PORT}.`));
