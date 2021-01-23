@@ -21,6 +21,7 @@ app.use(cors());
 app.use(express.json());
 
 
+
 app.use(require('./controllers/socket')(io));
 app.use('/register', require('./routes/api/register'));
 app.use('/login', require('./routes/api/login'));
