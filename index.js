@@ -26,5 +26,7 @@ app.use('/register', require('./routes/api/register'));
 app.use('/login', require('./routes/api/login'));
 app.use('/dashboard', require('./routes/api/dashboard'));
 
+const PORT = process.env.PORT || 8000;
+
 app.get('/', (req, res) => {res.json("Server up and running.")});
-server.listen(process.env.PORT, () => console.log(`Server is up on port ${process.env.PORT}.`));
+server.listen(PORT, () => console.log(`Server is up on port ${PORT}.`));

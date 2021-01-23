@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const User = require('../../models/userModel');
 const jwt = require('jsonwebtoken');
 const validate = require('../../controllers/validation');
+const config = require('../../config/config');
 
 const router = express.Router();
 
@@ -29,7 +30,7 @@ router.post('/', async (req, res) => {
 		const payload = {
 			email: user.email
 		};
-		const token = jwt.sign(payload, process.env.TOKEN_SECRET, {expiresIn: '7 days'});
+		const token = jwt.sign(payload, config.secretKey, {expiresIn: '7 days'});
 		res.header('auth-token').json({
 			type: "token",
 			value: token
