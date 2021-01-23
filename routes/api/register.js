@@ -2,7 +2,6 @@ const express = require('express');
 const validate = require('../../controllers/validation');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const config = require('../../config/config');
 
 const router = express.Router();
 const User = require('../../models/userModel');
@@ -29,7 +28,7 @@ router.post('/', async (req, res) => {
 		const payload = {
 			email: user.email
 		}
-		const token = jwt.sign(payload, config.secretKey, {expiresIn: '7 days'});
+		const token = jwt.sign(payload, process.env.TOKEN_SECRET, {expiresIn: '7 days'});
 		res.header('auth-token', token).json({
 			type: "token",
 			value: token
