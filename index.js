@@ -16,10 +16,10 @@ const io = socketio(server, {
 	}
 });
 
+connectDB();
 app.use(cors());
 app.use(express.json());
 
-connectDB();
 
 app.use(require('./controllers/socket')(io));
 app.use('/register', require('./routes/api/register'));
